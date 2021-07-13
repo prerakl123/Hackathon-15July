@@ -1,0 +1,552 @@
+{
+  "current_theme": "Light",
+  "font": ["Consolas", 11, "normal"],
+  "Light": {
+    "smoothscrollframe_canvas": {
+      "highlightthickness": 0,
+      "background": "#adba57"
+    },
+    "smoothscrollframe_widgetframe": {
+      "background": "#adba57"
+    },
+    "searchresultdropdownframe_upperframe": {
+      "background": "#c8c8c8",
+      "relief": "raised",
+      "highlightthickness": 0,
+      "bd": 1
+    },
+    "searchresultdropdownframe_nameandidframe": {
+      "background": "#c8c8c8",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_banknamelbl": {
+      "relief": "groove",
+      "background": "#c8c8c8",
+      "fg": "#00bb0b",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_ownershiplbl": {
+      "relief": "groove",
+      "background": "#c8c8c8",
+      "fg": "#e39827",
+      "font": "Calibri 12",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_dropdownframe": {
+      "background": "#c8c8c8",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_dropdownlbl": {
+      "font": "Calibri 16",
+      "background": "#c8c8c8",
+      "relief": "groove",
+      "fg": "#00a30b",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidurlframe": {
+      "background": "#c8c8c8",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidurl_lbl": {
+      "background": "#c8c8c8",
+      "relief": "groove",
+      "fg": "#e39827",
+      "font": "Calibri 12",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidurllbl": {
+      "background": "#c8c8c8",
+      "relief": "groove",
+      "fg": "#b59751",
+      "font": "Calibri 12",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_middleframe": {
+      "background": "#c8c8c8",
+      "relief": "sunken",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidframe": {
+      "background": "#c8c8c8",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidlbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#c8c8c8",
+      "fg": "black",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidnamelbl": {
+      "relief": "groove",
+      "background": "#c8c8c8",
+      "fg": "#e39827",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_industryframe": {
+      "background": "#c8c8c8",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_industrylbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#c8c8c8",
+      "fg": "black",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_industrynamelbl": {
+      "relief": "groove",
+      "background": "#c8c8c8",
+      "fg": "#e39827",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_countryframe": {
+      "background": "#c8c8c8",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_countrylbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#c8c8c8",
+      "fg": "black",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_countrynamelbl": {
+      "relief": "groove",
+      "background": "#c8c8c8",
+      "fg": "#e39827",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_keyframe": {
+      "background": "#c8c8c8",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_keylbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#c8c8c8",
+      "fg": "black",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_keynamelbl": {
+      "relief": "groove",
+      "background": "#c8c8c8",
+      "fg": "#e39827",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_lowerframe": {
+      "background": "#bcbcbc",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_editframe": {
+      "background": "#bcbcbc",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_editlbl": {
+      "background": "#bcbcbc",
+      "foreground": "#ff8000",
+      "font": "Cambria 13",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_confirmframe": {
+      "background": "#bcbcbc",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_confirmlbl": {
+      "background": "#bcbcbc",
+      "foreground": "#009e03",
+      "font": "Cambria 13",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "titlepageframe_titleframe": {
+      "background": "#c8c8c8"
+    },
+    "titlepageframe_gotitlelbl": {
+      "background": "#c8c8c8",
+      "foreground": "#545454",
+      "font": "Calibri 51 bold"
+    },
+    "titlepageframe_greentitlelbl": {
+      "background": "#c8c8c8",
+      "foreground": "#00a17b",
+      "font": "Calibri 51 bold"
+    },
+    "titlepageframe_othertitlelbl": {
+      "background": "#c8c8c8",
+      "foreground": "#505050",
+      "font": "Cambria 21"
+    },
+    "titlepageframe_searchframe": {
+      "background": "#c8c8c8"
+    },
+    "titlepageframe_searchentry": {
+      "width": 40,
+      "font": ["Century Gothic", 13],
+      "relief": "flat",
+      "background": "white",
+      "foreground": "#2e2e2e",
+      "insertbackground": "black"
+    },
+    "titlepageframe_searchbtn": {
+      "width": 4,
+      "font": ["Century Gothic", 10],
+      "relief": "groove",
+      "bd": 0,
+      "background": "#ebc263",
+      "foreground": "white"
+    },
+    "searchresultsframe_mainframe": {
+      "background": "#adba57",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultstitleframe": {
+      "background": "#adba57",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultstitlelbl": {
+      "relief": "groove",
+      "background": "#adba57",
+      "foreground": "white",
+      "font": "Calibri 21",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultsframe": {
+      "background": "#adba57",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultswidgetframe": {
+      "background": "#adba57",
+      "relief": "groove",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe": {
+      "background": "#adba57",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+
+
+    "frame": {
+      "bg": "#c8c8c8"
+    },
+    "canvas": {
+      "highlightthickness": 0,
+      "background": "#adba57"
+    }
+  },
+  "Dark": {
+    "smoothscrollframe_canvas": {
+      "highlightthickness": 0,
+      "background": "#915b10"
+    },
+    "smoothscrollframe_widgetframe": {
+      "background": "#915b10",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_upperframe": {
+      "background": "#575757",
+      "relief": "raised",
+      "highlightthickness": 0,
+      "bd": 1
+    },
+    "searchresultdropdownframe_nameandidframe": {
+      "background": "#575757",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_banknamelbl": {
+      "relief": "groove",
+      "background": "#575757",
+      "fg": "#00a17b",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_ownershiplbl": {
+      "relief": "groove",
+      "background": "#575757",
+      "fg": "#6f783e",
+      "font": "Calibri 12",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_dropdownframe": {
+      "background": "#575757",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_dropdownlbl": {
+      "font": "Calibri 16",
+      "background": "#575757",
+      "relief": "groove",
+       "fg": "#058567",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidurlframe": {
+      "background": "#575757",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidurl_lbl": {
+      "background": "#575757",
+      "relief": "groove",
+      "fg": "#6f783e",
+      "font": "Calibri 12",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidurllbl": {
+      "background": "#575757",
+      "relief": "groove",
+      "fg": "#e88b2e",
+      "font": "Calibri 12",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_middleframe": {
+      "background": "#575757",
+      "relief": "sunken",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidframe": {
+      "background": "#575757",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidlbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#575757",
+      "fg": "#6f783e",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_permidnamelbl": {
+      "relief": "groove",
+      "background": "#575757",
+      "fg": "#b8b8b8",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_industryframe": {
+      "background": "#575757",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_industrylbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#575757",
+      "fg": "#6f783e",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_industrynamelbl": {
+      "relief": "groove",
+      "background": "#575757",
+      "fg": "#b8b8b8",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_countryframe": {
+      "background": "#575757",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_countrylbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#575757",
+      "fg": "#6f783e",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_countrynamelbl": {
+      "relief": "groove",
+      "background": "#575757",
+      "fg": "#b8b8b8",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_keyframe": {
+      "background": "#575757",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_keylbl": {
+      "relief": "groove",
+      "compound": "top",
+      "background": "#575757",
+      "fg": "#6f783e",
+      "font": "Calibri 15 bold",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_keynamelbl": {
+      "relief": "groove",
+      "background": "#575757",
+      "fg": "#b8b8b8",
+      "font": "Calibri 15",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_lowerframe": {
+      "background": "#474747",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_editframe": {
+      "background": "#474747",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_editlbl": {
+      "background": "#474747",
+      "foreground": "#ffbd74",
+      "font": "Cambria 13",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_confirmframe": {
+      "background": "#474747",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe_confirmlbl": {
+      "background": "#474747",
+      "foreground": "#55e658",
+      "font": "Cambria 13",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "titlepageframe_titleframe": {
+      "background": "#575757"
+    },
+    "titlepageframe_gotitlelbl": {
+      "background": "#575757",
+      "foreground": "#8c8c8c",
+      "font": "Calibri 51 bold"
+    },
+    "titlepageframe_greentitlelbl": {
+      "background": "#575757",
+      "foreground": "#00bb0b",
+      "font": "Calibri 51 bold"
+    },
+    "titlepageframe_othertitlelbl": {
+      "background": "#575757",
+      "foreground": "#acacac",
+      "font": "Cambria 21"
+    },
+    "titlepageframe_searchframe": {
+      "background": "#575757"
+    },
+    "titlepageframe_searchentry": {
+      "width": 40,
+      "font": ["Century Gothic", 13],
+      "relief": "flat",
+      "background": "#4b4b4b",
+      "foreground": "#e6e6e6",
+      "insertbackground": "white"
+    },
+    "titlepageframe_searchbtn": {
+      "width": 4,
+      "font": ["Century Gothic", 10],
+      "relief": "groove",
+      "bd": 0,
+      "background": "#cf9008",
+      "foreground": "#666666"
+    },
+    "searchresultsframe_mainframe": {
+      "background": "#915b10",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultstitleframe": {
+      "background": "#915b10",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultstitlelbl": {
+      "relief": "groove",
+      "background": "#915b10",
+      "foreground": "white",
+      "font": "Calibri 21",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultsframe": {
+      "background": "#915b10",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultsframe_searchresultswidgetframe": {
+      "background": "#915b10",
+      "relief": "groove",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+    "searchresultdropdownframe": {
+      "background": "#915b10",
+      "highlightthickness": 0,
+      "bd": 0
+    },
+
+
+    "frame": {
+      "bg": "#575757"
+    },
+    "canvas": {
+      "highlightthickness": 0,
+      "background": "#915b10"
+    }
+  }
+}
