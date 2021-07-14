@@ -1,14 +1,17 @@
 from tkinter import *
-from tkinter import messagebox as tk_mb
-import os
-import importlib
-import sys
+import tkinter
+# from tkinter import messagebox as tk_mb
+# import os
+# import importlib
+# import sys
 import webbrowser
 import json
+import time
 from PIL import Image, ImageTk
 
 LIGHT = 'Light'
 DARK = 'Dark'
+PLACEHOLDER = 'Search by Name, Ticker or RIC'
 
 with open('themes.json', 'r') as theme_file:
     themes = json.loads(theme_file.read())
@@ -43,43 +46,6 @@ def center_window(win: Tk or Toplevel):
     y = win.winfo_screenheight() // 2 - win_height // 2
     win.geometry('+{}+{}'.format(x, y))
     win.deiconify()
-
-
-def install_necessary_modules(*modnames) -> None:
-    """
-    Function to install and import modules
-    """
-    for modname in modnames:
-        try:
-            # If module is already installed, try to import it
-            importlib.import_module(modname)
-            print(f"Importing {modname}")
-        except ImportError:
-
-            # Error if module is not installed
-            if os.system('PIP --version') == 0:
-                # No error from running PIP in the Command Window, therefore PIP.exe is in the %PATH%
-                os.system(f'PIP install {modname}')
-
-            else:
-                # Error, PIP.exe is NOT in the Path!!
-                pip_location_attempt_1 = sys.executable.replace("python.exe", "") + "pip.exe"
-                pip_location_attempt_2 = sys.executable.replace("python.exe", "") + "scripts/pip.exe"
-
-                if os.path.exists(pip_location_attempt_1):
-                    # The Attempt #1 File exists!!!
-                    os.system(pip_location_attempt_1 + " install " + modname)
-
-                elif os.path.exists(pip_location_attempt_2):
-                    # The Attempt #2 File exists!!!
-                    os.system(pip_location_attempt_2 + " install " + modname)
-
-                else:
-                    # Neither Attempts found the PIP.exe file, So Fail...
-                    print('Fatal error: Can\'t find PIP.exe')
-        else:
-            tk_mb.showerror('Installation Error!', f"Can't install {modname}")
-            continue
 
 
 def load_image(path: str, dimensions: tuple) -> ImageTk.PhotoImage:
@@ -117,7 +83,17 @@ class PlaceHolderEntry(Entry):
 
         self.put_placeholder()
 
+    def configure(self, cnf=None, **kw):
+        if 'placeholdercolor' in list(kw.keys()):
+            self.placeholder_color = kw['placeholdercolor']
+            self.put_placeholder()
+            kw.pop('placeholdercolor')
+        tkinter.Entry.configure(self=self, cnf=cnf, **kw)
+
+    config = configure
+
     def put_placeholder(self):
+        self.delete(0, END)
         self.insert(0, self.placeholder)
         self['fg'] = self.placeholder_color
 
@@ -192,15 +168,18 @@ class SmoothScrollFrame(LabelFrame):
 
 
 class SearchResultDropDownFrame(Frame):
-    def __init__(self, master: str, bank_name: str, ownership: str, perm_id: int or str,
-                 industry: str, country: str, key: int or str, perm_id_url='Link not available',
-                 **kw):
+    def __init__(self, master, root, parent_frame_list: list, bank_name: str, ownership: str, perm_id: int or str,
+                 industry: str, country: str, key: int or str, perm_id_url='Link not available', **kw):
         Frame.__init__(self, master, **kw)
+        self.master = master
+        self.root = root
+        self.parent_frame_list = parent_frame_list
         self.bank_name, self.ownership, self.perm_id, self.industry, self.country, self.key, \
             self.perm_id_url = bank_name, ownership, perm_id, industry, country, key, perm_id_url
+
         self.perm_id_img, self.industry_img, self.country_img, self.key_img = [None] * 4
         self.dropped_down = False
-        # self.set_images()
+        self.set_images()
 
         # ------------ UPPER FRAME ------------ #
         self.upper_frame = Frame(self)
@@ -209,8 +188,8 @@ class SearchResultDropDownFrame(Frame):
         self.ownership_lbl = Label(self.name_and_id_frame, text=self.ownership, anchor=W)
 
         self.drop_down_frame = Frame(self.upper_frame)
-        self.drop_down_lbl = Label(self.drop_down_frame, text='⤵', anchor=CENTER, width=7)
-        self.drop_down_lbl.bind('<ButtonRelease-1>', self.drop_down)
+        self.drop_down_lbl = Label(self.drop_down_frame, text='⤵', anchor=S, width=7)
+        self.drop_down_lbl.bind('<ButtonRelease-1>', self.drop_config)
 
         self.perm_id_url_frame = Frame(self.upper_frame)
         self.permidurl_lbl = Label(self.perm_id_url_frame, text='🔗 PermID URL', anchor=SE)
@@ -223,48 +202,64 @@ class SearchResultDropDownFrame(Frame):
         self.middle_frame = Frame(self)
 
         self.perm_id_frame = Frame(self.middle_frame)
-        self.perm_id_lbl = Label(self.perm_id_frame, text='PERM ID', width=30, height=5, anchor=S)  # image=self.perm_id_img)
+        self.perm_id_lbl = Label(self.perm_id_frame, text='Perm ID', width=30, height=125, anchor=S, image=self.perm_id_img)
         self.perm_id_name_lbl = Label(self.perm_id_frame, text=str(self.perm_id), width=30)
 
         self.industry_frame = Frame(self.middle_frame)
-        self.industry_lbl = Label(self.industry_frame, text='Industry', width=30, height=5, anchor=S)  # image=self.industry_img)
+        self.industry_lbl = Label(self.industry_frame, text='Industry', width=30, height=125, anchor=S, image=self.industry_img)
         self.industry_name_lbl = Label(self.industry_frame, text=self.industry, width=30)
 
         self.country_frame = Frame(self.middle_frame)
-        self.country_lbl = Label(self.country_frame, text='Country', width=30, height=5, anchor=S)  # image=self.country_img)
+        self.country_lbl = Label(self.country_frame, text='Country', width=30, height=125, anchor=S, image=self.country_img)
         self.country_name_lbl = Label(self.country_frame, text=self.country, width=30)
 
         self.key_frame = Frame(self.middle_frame)
-        self.key_lbl = Label(self.key_frame, text='Key', width=30, height=5, anchor=S)  # image=self.key_img)
+        self.key_lbl = Label(self.key_frame, text='Lei', width=30, height=125, anchor=S, image=self.key_img)
         self.key_name_lbl = Label(self.key_frame, text=str(self.key), width=30)
 
         # ------------ LOWER FRAME ------------ #
         self.lower_frame = Frame(self)
 
         self.edit_frame = Frame(self.lower_frame)
-        self.edit_lbl = Label(self.edit_frame, text='✎ Edit')
-        self.edit_lbl.bind('<Enter>', lambda _=None: self.edit_lbl.config(cursor='hand2', font='Cambria 13 underline'))
-        self.edit_lbl.bind('<Leave>', lambda _=None: self.edit_lbl.config(cursor='', font='Cambria 13'))
+        self.edit_lbl = Label(self.edit_frame, text='🖉 Edit')
+        self.edit_lbl.bind('<Enter>', lambda _=None: self.edit_lbl.config(cursor='hand2', font=('Century Gothic', 15, 'underline')))
+        self.edit_lbl.bind('<Leave>', lambda _=None: self.edit_lbl.config(cursor='', font=('Century Gothic', 15)))
+        self.edit_lbl.bind('<ButtonRelease-1>', self.edit_info)
 
         self.confirm_frame = Frame(self.lower_frame)
         self.confirm_lbl = Label(self.confirm_frame, text=f'{chr(10004)}Confirm')
-        self.confirm_lbl.bind('<Enter>', lambda _=None: self.confirm_lbl.config(cursor='hand2', font='Cambria 13 underline'))
-        self.confirm_lbl.bind('<Leave>', lambda _=None: self.confirm_lbl.config(cursor='', font='Cambria 13'))
+        self.confirm_lbl.bind('<Enter>', lambda _=None: self.confirm_lbl.config(cursor='hand2', font=('Century Gothic', 15, 'underline')))
+        self.confirm_lbl.bind('<Leave>', lambda _=None: self.confirm_lbl.config(cursor='', font=('Century Gothic', 15)))
+        self.confirm_lbl.bind('<ButtonRelease-1>', lambda _=None: self.root.confirm(frame=self))
 
         self.refresh()
 
-    def drop_down(self, event=None):
+    def back_up(self):
+        self.drop_down_lbl.config(text='⤵')
+        self.dropped_down = False
+        self.unpack_dropdown_frames()
+        self.configure(height=50)
+
+    def drop(self):
+        self.drop_down_lbl.config(text='⤶')
+        self.dropped_down = True
+        self.pack_dropdown_frames()
+        self.configure(height=280)
+
+    def drop_config(self, event=None):
         if self.dropped_down:
-            self.drop_down_lbl.config(text='⤵')
-            self.dropped_down = False
-            self.unpack_dropdown_frames()
-            self.configure(height=50)
+            self.back_up()
         else:
-            self.drop_down_lbl.config(text='⤶')
-            self.dropped_down = True
-            self.pack_dropdown_frames()
-            self.configure(height=250)
+            for _frame in self.parent_frame_list:
+                if _frame.dropped_down:
+                    _frame.drop_config()
+            self.drop()
         self.master.master.master.refresh()
+
+    def edit_info(self, event=None):
+        self.root.clear_search_results()
+        self.root.root.remove_frame(SearchResultsFrame)
+        self.root.root.show_frame(TitlePageFrame)
 
     def open_url(self, event=None):
         url = self.perm_id_url_lbl.cget('text')
@@ -278,13 +273,13 @@ class SearchResultDropDownFrame(Frame):
         self.bank_name_lbl.pack(side=TOP, anchor=NW, ipady=5)
         self.ownership_lbl.pack(side=TOP, anchor=SW, ipady=5)
         self.drop_down_lbl.pack(anchor=CENTER)
-        self.permidurl_lbl.pack(side=TOP, anchor=NE)
-        self.perm_id_url_lbl.pack(side=TOP, anchor=SE)
+        self.permidurl_lbl.pack(side=TOP, anchor=NE, ipady=5)
+        self.perm_id_url_lbl.pack(side=TOP, anchor=SE, ipady=5)
         if self.dropped_down:
             self.pack_dropdown_frames()
 
     def pack_dropdown_frames(self):
-        self.middle_frame.pack(side=TOP, fill=X, expand=TRUE)
+        self.middle_frame.pack(side=TOP, fill=X, expand=TRUE, ipady=15)
         self.perm_id_frame.pack(side=LEFT)
         self.industry_frame.pack(side=LEFT)
         self.key_frame.pack(side=RIGHT)
@@ -338,77 +333,47 @@ class SearchResultDropDownFrame(Frame):
 
     def refresh(self):
         if themes['current_theme'] == DARK:
-            self.config(**frame_config)
-            self.upper_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_upperframe'])
-            self.name_and_id_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_nameandidframe'])
-            self.bank_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_banknamelbl'])
-            self.ownership_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_ownershiplbl'])
-            self.drop_down_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_dropdownframe'])
-            self.drop_down_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_dropdownlbl'])
             self.drop_down_lbl.bind('<Enter>', lambda _=None: [self.drop_down_lbl.config(fg='#55dd5d'), self.drop_down_lbl.config(cursor='hand2')])
             self.drop_down_lbl.bind('<Leave>', lambda _=None: [self.drop_down_lbl.config(fg='#00a30b'), self.drop_down_lbl.config(cursor='')])
-            self.perm_id_url_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurlframe'])
-            self.permidurl_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurl_lbl'])
-            self.perm_id_url_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurllbl'])
-            self.middle_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_middleframe'])
-            self.perm_id_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidframe'])
-            self.perm_id_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidlbl'])
-            self.perm_id_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidnamelbl'])
-            self.industry_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_industryframe'])
-            self.industry_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_industrylbl'])
-            self.industry_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_industrynamelbl'])
-            self.country_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_countryframe'])
-            self.country_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_countrylbl'])
-            self.country_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_countrynamelbl'])
-            self.key_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_keyframe'])
-            self.key_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_keylbl'])
-            self.key_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_keynamelbl'])
-            self.lower_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_lowerframe'])
-            self.edit_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_editframe'])
-            self.edit_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_editlbl'])
-            self.confirm_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_confirmframe'])
-            self.confirm_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_confirmlbl'])
         else:
-            self.config(**frame_config)
-            self.upper_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_upperframe'])
-            self.name_and_id_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_nameandidframe'])
-            self.bank_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_banknamelbl'])
-            self.ownership_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_ownershiplbl'])
-            self.drop_down_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_dropdownframe'])
-            self.drop_down_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_dropdownlbl'])
             self.drop_down_lbl.bind('<Enter>', lambda _=None: [self.drop_down_lbl.config(fg='#069943'), self.drop_down_lbl.config(cursor='hand2')])
-            self.drop_down_lbl.bind('<Leave>', lambda _=None: [self.drop_down_lbl.config(fg='#058567'), self.drop_down_lbl.config(cursor='')])
-            self.perm_id_url_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurlframe'])
-            self.permidurl_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurl_lbl'])
-            self.perm_id_url_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurllbl'])
-            self.middle_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_middleframe'])
-            self.perm_id_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidframe'])
-            self.perm_id_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidlbl'])
-            self.perm_id_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidnamelbl'])
-            self.industry_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_industryframe'])
-            self.industry_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_industrylbl'])
-            self.industry_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_industrynamelbl'])
-            self.country_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_countryframe'])
-            self.country_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_countrylbl'])
-            self.country_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_countrynamelbl'])
-            self.key_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_keyframe'])
-            self.key_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_keylbl'])
-            self.key_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_keynamelbl'])
-            self.lower_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_lowerframe'])
-            self.edit_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_editframe'])
-            self.edit_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_editlbl'])
-            self.confirm_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_confirmframe'])
-            self.confirm_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_confirmlbl'])
+            self.drop_down_lbl.bind('<Leave>', lambda _=None: [self.drop_down_lbl.config(fg='#000000'), self.drop_down_lbl.config(cursor='')])
+
+        self.config(**frame_config)
+        self.upper_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_upperframe'])
+        self.name_and_id_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_nameandidframe'])
+        self.bank_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_banknamelbl'])
+        self.ownership_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_ownershiplbl'])
+        self.drop_down_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_dropdownframe'])
+        self.drop_down_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_dropdownlbl'])
+        self.perm_id_url_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurlframe'])
+        self.permidurl_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurl_lbl'])
+        self.perm_id_url_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidurllbl'])
+        self.middle_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_middleframe'])
+        self.perm_id_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidframe'])
+        self.perm_id_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidlbl'])
+        self.perm_id_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_permidnamelbl'])
+        self.industry_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_industryframe'])
+        self.industry_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_industrylbl'])
+        self.industry_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_industrynamelbl'])
+        self.country_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_countryframe'])
+        self.country_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_countrylbl'])
+        self.country_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_countrynamelbl'])
+        self.key_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_keyframe'])
+        self.key_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_keylbl'])
+        self.key_name_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_keynamelbl'])
+        self.lower_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_lowerframe'])
+        self.edit_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_editframe'])
+        self.edit_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_editlbl'])
+        self.confirm_frame.config(**themes[themes['current_theme']]['searchresultdropdownframe_confirmframe'])
+        self.confirm_lbl.config(**themes[themes['current_theme']]['searchresultdropdownframe_confirmlbl'])
 
     def set_images(self):
-        dimensions = (64, 64)
-        try:
-            self.perm_id_img = load_image('./images/perm_id.png', dimensions)
-            self.industry_img = load_image('./images/industry.png', dimensions)
-            self.country_img = load_image('./images/country.png', dimensions)
-            self.key_img = load_image('./images/key.png', dimensions)
-        except:
-            self.perm_id_img, self.industry_img, self.country_img, self.key_img = [None] * 4
+        dimensions = (75, 81)
+        self.perm_id_img = load_image('./images/permID.png', dimensions)
+        self.industry_img = load_image('./images/industry.png', dimensions)
+        self.country_img = load_image('./images/country.png', dimensions)
+        self.key_img = load_image('./images/key.png', dimensions)
 
 
 class TitlePageFrame(Frame):
@@ -423,7 +388,7 @@ class TitlePageFrame(Frame):
         self.other_title_lbl = Label(self.title_frame, text='Connecting Data to the world', font='Cambria 21')
 
         self.search_frame = Frame(self, **frame_config)
-        self.search_entry = PlaceHolderEntry(self.search_frame, placeholder='Search by Name, Ticker or RIC', width=40,
+        self.search_entry = PlaceHolderEntry(self.search_frame, placeholder=PLACEHOLDER, width=40,
                                              placeholdercolor='#b0b0b0' if themes['current_theme'] is DARK else '#7a7a7a',
                                              font=('Century Gothic', 13), relief=FLAT)
         self.search_btn = Button(self.search_frame, text='🔍', width=4, font=('Century Gothic', 10), relief=GROOVE, bd=0,
@@ -432,43 +397,41 @@ class TitlePageFrame(Frame):
         self.search_btn.bind('<Return>', self.search)
 
     def refresh(self):
-        if themes['current_theme'] == DARK:
-            self.config(**frame_config)
-            self.title_frame.config(**themes[themes['current_theme']]['titlepageframe_titleframe'])
-            self.go_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_gotitlelbl'])
-            self.green_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_greentitlelbl'])
-            self.other_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_othertitlelbl'])
-            self.search_frame.config(**themes[themes['current_theme']]['titlepageframe_searchframe'])
-            self.search_entry.config(**themes[themes['current_theme']]['titlepageframe_searchentry'])
-            self.search_btn.config(**themes[themes['current_theme']]['titlepageframe_searchbtn'])
-        else:
-            self.config(**frame_config)
-            self.title_frame.config(**themes[themes['current_theme']]['titlepageframe_titleframe'])
-            self.go_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_gotitlelbl'])
-            self.green_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_greentitlelbl'])
-            self.other_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_othertitlelbl'])
-            self.search_frame.config(**themes[themes['current_theme']]['titlepageframe_searchframe'])
-            self.search_entry.config(**themes[themes['current_theme']]['titlepageframe_searchentry'])
-            self.search_btn.config(**themes[themes['current_theme']]['titlepageframe_searchbtn'])
+        self.config(**frame_config)
+        self.title_frame.config(**themes[themes['current_theme']]['titlepageframe_titleframe'])
+        self.go_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_gotitlelbl'])
+        self.green_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_greentitlelbl'])
+        self.other_title_lbl.config(**themes[themes['current_theme']]['titlepageframe_othertitlelbl'])
+        self.search_frame.config(**themes[themes['current_theme']]['titlepageframe_searchframe'])
+        self.search_entry.config(**themes[themes['current_theme']]['titlepageframe_searchentry'])
+        self.search_btn.config(**themes[themes['current_theme']]['titlepageframe_searchbtn'])
 
     def search(self, event=None):
         """
         Method for searching inside database
         """
         example_data = [
-            ['Qatar National Bank QPSC', 'QNBK | Company Publicly Held', 15486, 'Banking Services', 'Qatar', '879879', 'https://permid.org/1-423255436'],
-            ['London National Bank LPSC', 'LNBK | Company Publicly Held', 64189, 'Banking Services', 'Britain', 812383, 'https://permid.org/6-377451629'],
-            ['Paris National Bank PPSC', 'PNBK | Company Privately Held', 48237, 'Banking and Finance Services', 'France', 442783, 'https://permid.org/7-352759846']
-        ]
+            ['Qatar National Bank QPSC', 'QNBK | Company Publicly Held', 15486, 'Banking Services', 'Qatar', '879879',
+             'https://permid.org/1-423255436'],
+            ['London National Bank LPSC', 'LNBK | Company Publicly Held', 64189, 'Banking Services', 'Britain', 812383,
+             'https://permid.org/6-377451629'],
+            ['Paris National Bank PPSC', 'PNBK | Company Privately Held', 48237, 'Banking and Finance Services',
+             'France', 442783, 'https://permid.org/7-352759846'],
+            ['German National Bank GPSC', 'GNBK | Company Publicly Held', 78991, 'Catering and Restaurant Services',
+             'Germany', 889921, 'https://permid.org/7-7481983123']]
+
         search_keyword = self.search_entry.get()
+        if search_keyword in PLACEHOLDER:
+            search_keyword = ''
 
 
         # # # # #    TO BE FILLED !!!    # # # # #
 
 
-        search_results = example_data  # list of lists containing all the stuff
+        search_results = example_data                     # list of lists containing all the stuff
         self.visible(False)
         self.root.search_results = search_results
+        self.root.search_keyword = search_keyword
         self.root.show_frame(SearchResultsFrame)
 
     def visible(self, _bool: bool):
@@ -503,22 +466,31 @@ class SearchResultsFrame(Frame):
         self.master = master
         self.root = root
         self.search_results = root.search_results
-        self.searched_keyword = root.searched_keyword
+        self.search_keyword = root.search_keyword
         self._screen_height = _screen_height = self.winfo_screenheight()
         self._screen_width = _screen_width = self.winfo_screenwidth()
         self.search_result_frame_list = []
         self.pack_propagate(False)
-        self.config(width=_screen_width-25, height=_screen_height-25)
+        self.config(width=_screen_width, height=_screen_height-25)
 
-        self.main_frame = Frame(self, width=_screen_width-25, height=25)
+        self.main_frame = Frame(self, width=_screen_width, height=25)
         self.main_frame.pack_propagate(False)
-        self.search_results_title_frame = Frame(self.main_frame, width=_screen_width-25, height=25)
+        self.search_results_title_frame = Frame(self.main_frame, width=_screen_width, height=25)
         self.search_results_title_frame.pack_propagate(False)
         self.search_results_title_lbl = Label(self.search_results_title_frame, anchor=W,
-                                              text=f'Search Results for: {self.searched_keyword}')
+                                              text=f'Search Results for: {self.search_keyword}')
 
         self.search_results_frame = SmoothScrollFrame(self, width=_screen_width, height=_screen_height-100)
         self.search_results_widget_frame = self.search_results_frame.widget_frame
+
+    def confirm(self, frame):
+        bank_name, ownership, perm_id, industry, country, key, perm_id_url\
+            = frame.bank_name, frame.ownership, frame.perm_id, frame.industry, frame.country, frame.key, frame.perm_id_url
+
+        # # # # #       S E T    S C O R E S    H E R E     # # # # #
+        self.root.selfscore = 0
+        self.root.localpeerscore = 0
+        self.root.globalpeerscore = 0
 
     def clear_search_results(self):
         for _frame in self.search_result_frame_list:
@@ -526,12 +498,15 @@ class SearchResultsFrame(Frame):
             del _frame
 
     def insert_search_results(self, results):
+        self.search_keyword = self.root.search_keyword
+        self.search_results_title_lbl.config(text=f'Search Results for: {self.search_keyword}')
         for bank_name, ownership, perm_id, industry, country, key, perm_id_url in self.search_results:
             # print(bank_name, ownership, perm_id, industry, country, key, perm_id_url)
-            result_frame = SearchResultDropDownFrame(self.search_results_widget_frame, bank_name=bank_name,
-                                                     ownership=ownership, perm_id=perm_id, industry=industry,
-                                                     country=country, key=key, perm_id_url=perm_id_url,
-                                                     width=self._screen_width-100, height=50)
+            result_frame = SearchResultDropDownFrame(self.search_results_widget_frame, root=self,
+                                                     parent_frame_list=self.search_result_frame_list,
+                                                     bank_name=bank_name, ownership=ownership, perm_id=perm_id,
+                                                     industry=industry, country=country, key=key, perm_id_url=perm_id_url,
+                                                     width=self._screen_width-40, height=50)
             self.search_result_frame_list.append(result_frame)
             result_frame.pack(side=TOP, fill=BOTH, expand=TRUE, padx=5, pady=5, ipady=10)
             result_frame.pack_propagate(False)
@@ -575,15 +550,108 @@ class SearchResultsFrame(Frame):
 class BankESGLevelFrame(Frame):
     def __init__(self, master, root, **kw):
         Frame.__init__(self, master, **kw)
+        self.master = master
+        self.root = root
+        self.slider_img, self.esgscoreslider_img, self.selfscore_img, self.localpeerscore_img, \
+            self.globalpeerscore_img = [None] * 5
+        self.slider_range = [151, 1098]
+        self.enter_period = 1000   # time period for
+        self.slider_height = 64
+        self.set_images()
+
+        self.aspirational_score_frame = Frame(self)
+        self.aspirational_score_lbl = Label(self.aspirational_score_frame, text='Your Aspirational ESG Score', anchor=W)
+        self.score_lbl = Label(self.aspirational_score_frame, text='0')
+
+        self.slider_canvas = Canvas(self, width=root.screen_width, height=200)
+        self.slider_canvas.update_idletasks()
+        self.slider_canvas.create_image((self.root.screen_width-1004)//2, self.slider_height, anchor=NW, image=self.slider_img)
+        self.canvas_slider_img = self.slider_canvas.create_image(
+            ((self.root.screen_width-1004)//2)-30, self.slider_height + 17, image=self.esgscoreslider_img, anchor=NW
+        )
+        self.slider_canvas.bind('<B1-Motion>', self.move_slider)
+        # self.slider_canvas.bind('<Enter>', )
+
+    def calculate_esgscore(self, x_coord):
+        upper = self.slider_range[1]
+        lower = self.slider_range[0]
+        cent = upper - lower
+        current_score = 100 - ((upper - x_coord) / cent) * 100
+        self.score_lbl.config(text=f"{current_score}")
+
+    def move_slider(self, event):
+        if event.x_root < ((self.root.screen_width-1004)//2) + 62:
+            x_coord = ((self.root.screen_width-1004)//2) + 62 - 92
+        elif event.x_root > (((self.root.screen_width-1004)//2) + 1004) + 5:
+            x_coord = (((self.root.screen_width-1004)//2) + 1004) + 5 - 92
+        else:
+            x_coord = event.x_root - 92
+        self.calculate_esgscore(x_coord)
+        self.esgscoreslider_img = load_image('./images/ESGscoreslider.png', dimensions=(120, 85))
+        self.canvas_slider_img = self.slider_canvas.create_image(x_coord, self.slider_height + 17, anchor=NW,
+                                                                 image=self.esgscoreslider_img)
 
     def refresh(self):
-        self.config(**frame_config)
+        self.config(**themes[themes['current_theme']]['bankesglevelframe'])
+        self.aspirational_score_frame.config(**themes[themes['current_theme']]['bankesglevelframe_aspirationalscoreframe'])
+        self.aspirational_score_lbl.config(**themes[themes['current_theme']]['bankesglevelframe_aspirationallbl'])
+        self.score_lbl.config(**themes[themes['current_theme']]['bankesglevelframe_scorelbl'])
+        self.slider_canvas.config(**themes[themes['current_theme']]['bankesglevelframe_slidercanvas'])
 
     def pack_all(self):
-        pass
+        self.root.remove_frame(self.root.current_visible_frame)
+        self.aspirational_score_frame.pack(side=TOP, fill=BOTH, expand=TRUE)
+        self.aspirational_score_lbl.pack(side=TOP, fill=BOTH, expand=TRUE, anchor=W)
+        self.score_lbl.pack(side=TOP, fill=BOTH, expand=TRUE)
+        self.slider_canvas.pack(side=TOP, expand=TRUE, fill=BOTH)
+        self.set_globalpeerscore()
+        self.set_localpeerscore()
+        self.set_selfscore()
 
     def unpack_all(self):
-        pass
+        self.aspirational_score_frame.pack_forget()
+        self.slider_canvas.pack_forget()
+        self.aspirational_score_lbl.pack_forget()
+        self.score_lbl.pack_forget()
+        self.slider_canvas.pack_forget()
+
+    def set_selfscore(self):
+        upper = self.slider_range[1]
+        lower = self.slider_range[0]
+        cent = upper - lower
+        x_coord = int(((cent * (self.root.selfscore - 100)) / 100) + upper)
+        self.selfscore_img = load_image('images/SelfScore.png', dimensions=(130, 85))
+        self.slider_canvas.create_image(x_coord, self.slider_height - 68, anchor=NW, image=self.selfscore_img)
+        self.slider_canvas.create_text(x_coord + 20, self.slider_height - 40, font=('Century Gothic', 18, 'bold'),
+                                       text=str(int(self.root.selfscore)), fill='white')
+
+    def set_localpeerscore(self):
+        upper = self.slider_range[1]
+        lower = self.slider_range[0]
+        cent = upper - lower
+        x_coord = int(((cent*(self.root.localpeerscore - 100)) / 100) + upper)
+        self.localpeerscore_img = load_image('./images/LocalPeerScore.png', dimensions=(130, 85))
+        self.slider_canvas.create_image(x_coord, self.slider_height - 68, anchor=NW, image=self.localpeerscore_img)
+        self.slider_canvas.create_text(x_coord + 20, self.slider_height - 40, font=('Century Gothic', 18, 'bold'),
+                                       text=str(int(self.root.localpeerscore)), fill='white')
+
+    def set_globalpeerscore(self):
+        upper = self.slider_range[1]
+        lower = self.slider_range[0]
+        cent = upper - lower
+        x_coord = int(((cent * (self.root.globalpeerscore - 100)) / 100) + upper)
+        self.globalpeerscore_img = load_image('./images/GlobalPeerScore.png', dimensions=(130, 85))
+        self.slider_canvas.create_image(x_coord, self.slider_height - 68, anchor=NW, image=self.globalpeerscore_img)
+        self.slider_canvas.create_text(x_coord + 20, self.slider_height - 40, font=('Century Gothic', 18, 'bold'),
+                                       text=str(int(self.root.globalpeerscore)), fill='white')
+
+    def set_images(self):
+        dimensions = (120, 85)
+        self.esgscoreslider_img = load_image('./images/ESGscoreslider.png', dimensions=dimensions)
+        self.selfscore_img = load_image('images/SelfScore.png', dimensions=dimensions)
+        self.localpeerscore_img = load_image('./images/LocalPeerScore.png', dimensions=dimensions)
+        self.globalpeerscore_img = load_image('./images/GlobalPeerScore.png', dimensions=dimensions)
+        self.slider_img = load_image('./images/Slider.png', (1004, 59))
 
     def visible(self, _bool: bool):
         if _bool:
@@ -615,18 +683,22 @@ class LastPageFrame(Frame):
 class App(Tk):
     def __init__(self):
         Tk.__init__(self)
-        _screen_width = self.winfo_screenwidth()
+        self.screen_width = _screen_width = self.winfo_screenwidth()
+        self.screen_height = _screen_height = self.winfo_screenheight()
         self.available_frames = [TitlePageFrame, SearchResultsFrame, BankESGLevelFrame, LastPageFrame]
         self.frame_list = []
         self.light_mode_img = None
         self.dark_mode_img = None
-        self.title_page_img = None
-        self.search_results_img = None
-        self.bank_esg_level_img = None
+        # self.title_page_img = None
+        # self.search_results_img = None
+        # self.bank_esg_level_img = None
         self.frames = {}
         self.current_visible_frame = None
         self.search_results = []
-        self.searched_keyword = ''
+        self.search_keyword = ''
+        self.selfscore = 22
+        self.localpeerscore = 35
+        self.globalpeerscore = 75
 
         self.set_images()
 
@@ -795,8 +867,9 @@ if __name__ == '__main__':
     app = App()
     screen_height = app.winfo_screenheight()
     screen_width = app.winfo_screenwidth()
-    app.geometry(f"{screen_width-50}x{screen_height-100}+{screen_width//100}+{screen_height//100}")
+    # app.geometry(f"{screen_width-50}x{screen_height-100}+{screen_width//100}+{screen_height//100}")
     app.minsize(1296, 648)
+    app.wm_state('zoomed')
     app.title('APP TITLE')
     update_themes(_app=app)
     app.mainloop()
